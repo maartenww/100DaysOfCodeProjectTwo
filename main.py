@@ -12,15 +12,15 @@ pg.display.set_caption('SP Ayce, In Vayyyders')
 bg_image = pg.image.load_extended('starfield.jpg').convert()
 player_image = pg.image.load_extended('spaceship_t.png').convert_alpha()
 player_image = pg.transform.scale(player_image, (42, 46))
-alien_image = pg.image.load_extended("alien_t.png").convert_alpha()
-alien_image = pg.transform.scale(alien_image, (32, 62))
+#alien_image = pg.image.load_extended("alien_t.png").convert_alpha()
+#alien_image = pg.transform.scale(alien_image, (32, 62))
 # Is game running boolean init
 isRunning = True
 
 player1 = Player(y_pos=SCREEN_HEIGHT * .85)
 enemies = []
-for x in range(1):
-    enemies.append(Alien(y_pos=20))
+for x in range(19):
+    enemies.append(Alien())
 
 # Main game loop
 def main():
@@ -72,13 +72,25 @@ class Game:
         # Draws player on surface at the x and y pos
         surface.blit(player_image, [player1.x_pos, player1.y_pos])
         # Draws multiple enemies unto the screen and at x and y
-        # While incrementing the x pos to spread the enemies out.
         for enemy in enemies:
-            surface.blit(alien_image, [enemy.x_pos, enemy.y_pos])
-
-
-
-
+            surface.blit(enemy.alien_image, [enemy.x_pos,enemy.y_pos])
+            enemies[1].x_pos = 50
+            enemies[2].x_pos = 100
+            enemies[3].x_pos = 150
+            enemies[4].x_pos = 200
+            enemies[5].x_pos = 250
+            enemies[6].x_pos = 300
+            enemies[7].x_pos = 350
+            enemies[8].x_pos = 400
+            enemies[9].x_pos = 450
+            enemies[10].x_pos = 500
+            enemies[11].x_pos = 550
+            enemies[12].x_pos = 600
+            enemies[13].x_pos = 650
+            enemies[14].x_pos = 700
+            enemies[15].x_pos = 750
+            enemies[16].x_pos = 800
+        # Todo: create an iterator that adds a certain value to draw each ship seperately (very hard)
 if __name__ == "__main__":
     main()
     isRunning = False

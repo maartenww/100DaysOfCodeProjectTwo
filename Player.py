@@ -20,6 +20,8 @@ class Alien:
     alien_sprite_width = 32
     alien_sprite_height = 62
     alien_sprite_size = (alien_sprite_width, alien_sprite_height)
+    alien_image = pg.image.load_extended("alien_t.png")#.convert_alpha()
+    alien_image = pg.transform.scale(alien_image, (32, 62))
     alien_Rect = pg.Rect((alien_pos), (alien_sprite_size))
     def __init__(self, x_pos=0, y_pos=0):
         self.x_pos = x_pos

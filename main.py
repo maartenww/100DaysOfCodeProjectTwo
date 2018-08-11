@@ -12,14 +12,12 @@ pg.display.set_caption('SP Ayce, In Vayyyders')
 bg_image = pg.image.load_extended('starfield.jpg').convert()
 player_image = pg.image.load_extended('spaceship_t.png').convert_alpha()
 player_image = pg.transform.scale(player_image, (42, 46))
-#alien_image = pg.image.load_extended("alien_t.png").convert_alpha()
-#alien_image = pg.transform.scale(alien_image, (32, 62))
 # Is game running boolean init
 isRunning = True
 
 player1 = Player(y_pos=SCREEN_HEIGHT * .85)
 enemies = []
-for x in range(19):
+for x in range(90): # There are 90 ships and if you divde 90 by 18 you get the number of lines on the screen
     enemies.append(Alien())
 
 # Main game loop
@@ -69,30 +67,21 @@ class Game:
     def draw(self, surface):
         # Screen background
         surface.blit(bg_image, [0, 0])
+
         # Draws player on surface at the x and y pos
         surface.blit(player_image, [player1.x_pos, player1.y_pos])
-        # Draws multiple enemies unto the screen and at x and y
-        for enemy in enemies:
-            surface.blit(enemy.alien_image, [enemy.x_pos,enemy.y_pos])
-            enemies[1].x_pos = 50
-            enemies[2].x_pos = 100
-            enemies[3].x_pos = 150
-            enemies[4].x_pos = 200
-            enemies[5].x_pos = 250
-            enemies[6].x_pos = 300
-            enemies[7].x_pos = 350
-            enemies[8].x_pos = 400
-            enemies[9].x_pos = 450
-            enemies[10].x_pos = 500
-            enemies[11].x_pos = 550
-            enemies[12].x_pos = 600
-            enemies[13].x_pos = 650
-            enemies[14].x_pos = 700
-            enemies[15].x_pos = 750
-            enemies[16].x_pos = 800
-        # Todo: create an iterator that adds a certain value to draw each ship seperately (very hard)
+
+        # Draws multiple enemies unto the screen in 5 lines (Check init of enemies list for more info)
+        temp_x = 0
+        for i in range(len(enemies)):
+            enemies[i].x_pos = int(i % 18) * 50 # Adds 50 to the next object in the enemies list to spread out the enemy on the x-axis
+            enemies[i].y_pos = int(i / 18) * 50 # Adds 50 to the next object in the enemies list on the y-axis to start a new line this happens each 18 enemies. Python always rounds down when converting floats to integers.
+            surface.blit(enemies[i].alien_image, [enemies[i].x_pos, enemies[i].y_pos]) # Draws the enemy on the screen on the x and y axis
+            temp_x += 50
+
 if __name__ == "__main__":
     main()
     isRunning = False
     pg.quit()
     sys.exit()
+

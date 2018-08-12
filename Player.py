@@ -13,6 +13,19 @@ class Player:
         self.y_pos = y_pos
         self.x_pos = x_pos
 
+    def update(self):
+        # Updates Rect position (invisible border around the sprite) with the sprite
+        self.player_Rect.x = self.x_pos
+        self.player_Rect.y = self.y_pos
+
+        # Border collision in a nutshell.
+        if self.player_Rect.x < 0:
+            self.player_Rect.x = 0
+            self.x_pos = 0
+        elif self.player_Rect.x > SCREEN_WIDTH - self.player_sprite_width:
+            self.player_Rect.x = SCREEN_WIDTH - self.player_sprite_width
+            self.x_pos = SCREEN_WIDTH - self.player_sprite_width
+
 class Alien:
     x_pos = 0
     y_pos = 0
@@ -26,4 +39,19 @@ class Alien:
     def __init__(self, x_pos=0, y_pos=0):
         self.x_pos = x_pos
         self.y_pos = y_pos
+        for i in range(len(enemies)):
+            enemies[i].x_pos = int(i % 18) * 50  # Adds 50 to the next object in the enemies list to spread out the enemy on the x-axis
+            enemies[i].y_pos = int(i / 18) * 50  # Adds 50 to the next object in the enemies list on the y-axis to start a new line this happens each 16 enemies. Python always rounds down when converting floats to integers.
+
+    def move_right(self):
+        self.x_pos += 10
+        self.y_pos += 10
+    def move_left(self):
+        self.x_pos -= 10
+        self.y_pos -= 10
+
+    def update(self):
+        # Updates Rect position (invisible border around the sprite) with the sprite
+        self.alien_Rect.x = self.x_pos
+        self.alien_Rect.y = self.y_pos
 

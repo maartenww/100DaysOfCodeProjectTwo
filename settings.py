@@ -4,6 +4,10 @@ SCREEN_HEIGHT = 600
 # Tuple of Width and Height
 SCREEN_RESOLUTION = (SCREEN_WIDTH, SCREEN_HEIGHT)
 
+# Enemies list
+enemies = []
+
+
 # Color initialization
 black = (0, 0, 0)
 red = (255, 0, 0)

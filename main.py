@@ -12,6 +12,8 @@ pg.display.set_caption('SP Ayce, In Vayyyders')
 bg_image = pg.image.load_extended('starfield.jpg').convert()
 player_image = pg.image.load_extended('spaceship_t.png').convert_alpha()
 player_image = pg.transform.scale(player_image, (42, 46))
+
+
 # Is game running boolean init
 isRunning = True
 
@@ -38,7 +40,7 @@ def main():
 
 class Game:
     xx = 0
-    yy = True
+    yy = 0
     def create(self):
         pass
 
@@ -49,19 +51,36 @@ class Game:
         clock.tick(FPS)
         self.xx += clock.get_time()
         if self.xx > 800:
-            if self.yy:
+            if self.yy == 0:
                 for enemy in enemies:
                     enemy.move_right()
                 print(self.xx)
                 self.xx = 0
-                self.yy = False
-            elif self.yy == False:
+                self.yy = 2
+            elif self.yy == 1:
                 for enemy in enemies:
                     enemy.move_left()
                 print(self.xx)
                 self.xx = 0
-                self.yy = True
-
+                self.yy = 3
+            elif self.yy == 2:
+                for enemy in enemies:
+                    enemy.move_down()
+                print(self.xx)
+                self.xx = 0
+                self.yy = 5
+            elif self.yy == 3:
+                for enemy in enemies:
+                    enemy.move_up()
+                print(self.xx)
+                self.xx = 0
+                self.yy = 0
+            elif self.yy == 5:
+                for enemy in enemies:
+                    enemy.move_down()
+                print(self.xx)
+                self.xx = 0
+                self.yy = 1 # Alien movement
 
     def handle_events(self):
         for event in pg.event.get():
@@ -73,6 +92,8 @@ class Game:
                     player1.x_pos -= 10
                 elif event.key == pg.K_d:
                     player1.x_pos += 10
+                elif event.key == pg.K_q:
+                    player1.shoot()
 
     def draw(self, surface):
         # Screen background
@@ -85,10 +106,15 @@ class Game:
         for i in range(len(enemies)):
             surface.blit(enemies[i].alien_image, [enemies[i].x_pos, enemies[i].y_pos]) # Draws the enemy on the screen on the x and y axis
 
+        for i in range(len(bullets)):
+            surface.blit(bullets[i].bullet_image, [bullets[i].x_pos, bullets[i].y_pos])
+
+
 if __name__ == "__main__":
     main()
     isRunning = False
     pg.quit()
     sys.exit()
+
 
 

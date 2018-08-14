@@ -6,6 +6,8 @@ SCREEN_RESOLUTION = (SCREEN_WIDTH, SCREEN_HEIGHT)
 
 # Enemies list
 enemies = []
+# Bullets list
+bullets = []
 
 
 # Color initialization

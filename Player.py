@@ -1,5 +1,6 @@
 import pygame as pg
 from settings import *
+
 # todo check http://programarcadegames.com/index.php?chapter=bitmapped_graphics_and_sound (It's a good site)
 class Player:
     x_pos = SCREEN_WIDTH / 2
@@ -26,6 +27,12 @@ class Player:
             self.player_Rect.x = SCREEN_WIDTH - self.player_sprite_width
             self.x_pos = SCREEN_WIDTH - self.player_sprite_width
 
+    def shoot(self):
+        x_pos = self.x_pos
+        y_pos = self.y_pos
+        bullets.append(Bullet(x_pos=x_pos,y_pos=y_pos))
+    # TODO: Yo dawg, fix that BULLetSHIT, hahaha get it?
+
 class Alien:
     x_pos = 0
     y_pos = 0
@@ -43,15 +50,38 @@ class Alien:
             enemies[i].x_pos = int(i % 18) * 50  # Adds 50 to the next object in the enemies list to spread out the enemy on the x-axis
             enemies[i].y_pos = int(i / 18) * 50  # Adds 50 to the next object in the enemies list on the y-axis to start a new line this happens each 16 enemies. Python always rounds down when converting floats to integers.
 
-    def move_right(self):
-        self.x_pos += 10
-        self.y_pos += 10
-    def move_left(self):
-        self.x_pos -= 10
-        self.y_pos -= 10
-
     def update(self):
         # Updates Rect position (invisible border around the sprite) with the sprite
         self.alien_Rect.x = self.x_pos
         self.alien_Rect.y = self.y_pos
+
+    def move_down(self):
+        self.y_pos += 10
+
+    def move_up(self):
+        self.y_pos -=10
+
+    def move_right(self):
+        self.x_pos += 10
+
+    def move_left(self):
+        self.x_pos -= 10
+
+class Bullet:
+    x_pos = 0
+    y_pos = 0
+    bullet_pos = (x_pos, y_pos)
+    bullet_sprite_width = 10
+    bullet_sprite_height = 30
+    bullet_sprite_size = (bullet_sprite_width, bullet_sprite_height)
+    bullet_image = pg.image.load_extended("laserguy.png")
+    bullet_Rect = pg.Rect((bullet_pos), (bullet_sprite_size))
+    def __init__(self, x_pos=0,y_pos=0):
+        self.x_pos = x_pos
+        self.y_pos = y_pos
+
+    def update(self):
+        self.bullet_Rect.x = self.x_pos
+        self.bullet_Rect.y = self.y_pos
+
 

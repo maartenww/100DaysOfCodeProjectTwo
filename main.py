@@ -25,7 +25,6 @@ player1 = Player(y_pos=SCREEN_HEIGHT * .85)
 for x in range(90): # There are 90 ships and if you divide 90 by 18 you get the number of lines on the screen
     enemies.append(Alien())
 
-
 # Main game loop
 def main():
     game1 = Game()
@@ -39,7 +38,8 @@ def main():
         pg.display.update()
 
 class Game:
-    xx = 0
+    timer = 0
+    timer2 = 0
     yy = 0
     def create(self):
         pass
@@ -48,39 +48,46 @@ class Game:
         player1.update()
         for enemy in enemies:
             Alien.update(enemy)
+        for bullet in bullets:
+            Bullet.update(bullet)
         clock.tick(FPS)
-        self.xx += clock.get_time()
-        if self.xx > 800:
+        self.timer += clock.get_time()
+        self.timer2 += clock.get_time()
+        if self.timer > 800:
             if self.yy == 0:
                 for enemy in enemies:
                     enemy.move_right()
-                print(self.xx)
-                self.xx = 0
+                print(self.timer)
+                self.timer = 0
                 self.yy = 2
             elif self.yy == 1:
                 for enemy in enemies:
                     enemy.move_left()
-                print(self.xx)
-                self.xx = 0
+                print(self.timer)
+                self.timer = 0
                 self.yy = 3
             elif self.yy == 2:
                 for enemy in enemies:
                     enemy.move_down()
-                print(self.xx)
-                self.xx = 0
+                print(self.timer)
+                self.timer = 0
                 self.yy = 5
             elif self.yy == 3:
                 for enemy in enemies:
                     enemy.move_up()
-                print(self.xx)
-                self.xx = 0
+                print(self.timer)
+                self.timer = 0
                 self.yy = 0
             elif self.yy == 5:
                 for enemy in enemies:
                     enemy.move_down()
-                print(self.xx)
-                self.xx = 0
+                print(self.timer)
+                self.timer = 0
                 self.yy = 1 # Alien movement
+        if self.timer2 > 800:
+            for i in range(len(bullets)):
+                bullets[i].y_pos -= 10
+
 
     def handle_events(self):
         for event in pg.event.get():

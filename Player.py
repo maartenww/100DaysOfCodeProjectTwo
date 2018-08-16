@@ -30,8 +30,7 @@ class Player:
     def shoot(self):
         x_pos = self.x_pos
         y_pos = self.y_pos
-        bullets.append(Bullet(x_pos=x_pos,y_pos=y_pos))
-    # TODO: Yo dawg, fix that BULLetSHIT, hahaha get it?
+        bullets.append(Bullet(x_pos=x_pos + (self.player_sprite_width/2) - (Bullet.bullet_sprite_width/2) ,y_pos=y_pos-Bullet.bullet_sprite_height))
 
 class Alien:
     x_pos = 0
@@ -75,6 +74,7 @@ class Bullet:
     bullet_sprite_height = 30
     bullet_sprite_size = (bullet_sprite_width, bullet_sprite_height)
     bullet_image = pg.image.load_extended("laserguy.png")
+    bullet_image = pg.transform.scale(bullet_image, (10, 30))
     bullet_Rect = pg.Rect((bullet_pos), (bullet_sprite_size))
     def __init__(self, x_pos=0,y_pos=0):
         self.x_pos = x_pos

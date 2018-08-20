@@ -10,20 +10,35 @@ screen = pg.display.set_mode((SCREEN_RESOLUTION))
 pg.display.set_caption('SP Ayce, In Vayyyders')
 # Initialize image
 bg_image = pg.image.load_extended('starfield.jpg').convert()
-player_image = pg.image.load_extended('spaceship_t.png').convert_alpha()
-player_image = pg.transform.scale(player_image, (42, 46))
-
+#player_image = pg.image.load_extended('spaceship_t.png').convert_alpha()
+#player_image = pg.transform.scale(player_image, (42, 46))
+all_sprites = pg.sprite.Group()
+player_sprites = pg.sprite.Group()
+enemy_sprites = pg.sprite.Group()
+bullet_sprites = pg.sprite.Group()
+scoreText = pg.font.Font('lunchds.ttf', 35)
 
 # Is game running boolean init
 isRunning = True
 
+# Time things and Fps
 clock = pg.time.Clock()
 FPS = 60
 
+# Instantiate Player class
 player1 = Player(y_pos=SCREEN_HEIGHT * .85)
 
+# Instantiate Alien class
 for x in range(90): # There are 90 ships and if you divide 90 by 18 you get the number of lines on the screen
     enemies.append(Alien())
+
+# Add sprite to groups
+all_sprites.add(player1)
+player_sprites.add(player1)
+
+# Add sprite to groups
+all_sprites.add(enemies)
+enemy_sprites.add(enemies)
 
 # Main game loop
 def main():
@@ -31,6 +46,7 @@ def main():
 
     while isRunning:
         game1.create()
+        game1.load_text()
         game1.handle_events()
         game1.draw(screen)
         game1.update()
@@ -40,53 +56,74 @@ def main():
 class Game:
     timer = 0
     timer2 = 0
-    yy = 0
+    patternNumber = 0
+    score = 0
+    actualscore = 0
+
+    def load_text(self):
+        # Text display / score display
+        self.actualscore = scoreText.render(str(self.score), False, (white))
+
+
     def create(self):
         pass
 
     def update(self):
-        player1.update()
+        player1.pUpdate()
         for enemy in enemies:
-            Alien.update(enemy)
+            Alien.eUpdate(enemy)
         for bullet in bullets:
-            Bullet.update(bullet)
+            Bullet.bUpdate(bullet)
+            # Add sprites to group
+            all_sprites.add(bullets)
+            bullet_sprites.add(bullets)
+
+        # bullet + enemy collision detection and enemy elimination.
+        all_sprites.update()
+        for bullet in bullet_sprites:
+            self.counter = 0
+            if pg.sprite.spritecollide(bullet, enemy_sprites, dokill= True):
+                self.score += 1
+
         clock.tick(FPS)
         self.timer += clock.get_time()
         self.timer2 += clock.get_time()
         if self.timer > 800:
-            if self.yy == 0:
+            if self.patternNumber == 0:
                 for enemy in enemies:
                     enemy.move_right()
                 print(self.timer)
                 self.timer = 0
-                self.yy = 2
-            elif self.yy == 1:
+                self.patternNumber = 2
+            elif self.patternNumber == 1:
                 for enemy in enemies:
                     enemy.move_left()
                 print(self.timer)
                 self.timer = 0
-                self.yy = 3
-            elif self.yy == 2:
+                self.patternNumber = 3
+            elif self.patternNumber == 2:
                 for enemy in enemies:
                     enemy.move_down()
                 print(self.timer)
                 self.timer = 0
-                self.yy = 5
-            elif self.yy == 3:
+                self.patternNumber = 5
+            elif self.patternNumber == 3:
                 for enemy in enemies:
                     enemy.move_up()
                 print(self.timer)
                 self.timer = 0
-                self.yy = 0
-            elif self.yy == 5:
+                self.patternNumber = 0
+            elif self.patternNumber == 5:
                 for enemy in enemies:
                     enemy.move_down()
                 print(self.timer)
                 self.timer = 0
-                self.yy = 1 # Alien movement
+                self.patternNumber = 1 # Alien movement
         if self.timer2 > 800:
             for i in range(len(bullets)):
                 bullets[i].y_pos -= 10
+
+        screen.blit(self.actualscore, (200,400))
 
 
     def handle_events(self):
@@ -106,15 +143,9 @@ class Game:
         # Screen background
         surface.blit(bg_image, [0, 0])
 
-        # Draws player on surface at the x and y pos
-        surface.blit(player_image, [player1.x_pos, player1.y_pos])
 
-        # Draws multiple enemies unto the screen in 5 lines (Check init of enemies list for more info)
-        for i in range(len(enemies)):
-            surface.blit(enemies[i].alien_image, [enemies[i].x_pos, enemies[i].y_pos]) # Draws the enemy on the screen on the x and y axis
 
-        for i in range(len(bullets)):
-            surface.blit(bullets[i].bullet_image, [bullets[i].x_pos, bullets[i].y_pos])
+        all_sprites.draw(surface)
 
 
 if __name__ == "__main__":

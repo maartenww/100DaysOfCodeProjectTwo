@@ -1,100 +1,159 @@
 import pygame as pg
+import sys
+from Player import *
 from settings import *
 
-# todo check http://programarcadegames.com/index.php?chapter=bitmapped_graphics_and_sound (It's a good site)
-class Player(pg.sprite.Sprite):
-    x_pos = SCREEN_WIDTH / 2
-    y_pos = 0
-    player_pos = (x_pos, y_pos)
-    player_sprite_width = 42
-    player_sprite_height = 46
-    player_sprite_size = (player_sprite_width, player_sprite_height)
-    def __init__(self, x_pos=SCREEN_WIDTH/2, y_pos=0):
-        pg.sprite.Sprite.__init__(self)
-        self.image = pg.Surface(((self.player_sprite_size)))
-        self.image = pg.image.load_extended('spaceship_t.png').convert_alpha()
-        self.image = pg.transform.scale(self.image, (42, 46))
-        self.rect = self.image.get_rect()
+pg.init()
+# Screen initialization, the first line of code initializes the screen itself.
+screen = pg.display.set_mode((SCREEN_RESOLUTION))
+# Title Init
+pg.display.set_caption('SP Ayce, In Vayyyders')
+# Initialize image
+bg_image = pg.image.load_extended('starfield.jpg').convert()
+#player_image = pg.image.load_extended('spaceship_t.png').convert_alpha()
+#player_image = pg.transform.scale(player_image, (42, 46))
+all_sprites = pg.sprite.Group()
+player_sprites = pg.sprite.Group()
+enemy_sprites = pg.sprite.Group()
+bullet_sprites = pg.sprite.Group()
+scoreText = pg.font.Font('lunchds.ttf', 35)
 
-        self.y_pos = y_pos
-        self.x_pos = x_pos
-    def pUpdate(self):
-        # Updates Rect position (invisible border around the sprite) with the sprite (2)
-        self.rect.x = self.x_pos
-        self.rect.y = self.y_pos
+# Is game running boolean init
+isRunning = True
 
-        if self.rect.x < 0:
-            self.rect.x = 0
-            self.x_pos = 0
-        elif self.rect.x > SCREEN_WIDTH - self.player_sprite_width:
-            self.rect.x = SCREEN_WIDTH - self.player_sprite_width
-            self.x_pos = SCREEN_WIDTH - self.player_sprite_width
+# Time things and Fps
+clock = pg.time.Clock()
+FPS = 60
+
+# Instantiate Player class
+player1 = Player(y_pos=SCREEN_HEIGHT * .85)
+
+# Instantiate Alien class
+for x in range(90): # There are 90 ships and if you divide 90 by 18 you get the number of lines on the screen
+    enemies.append(Alien())
+
+# Add sprite to groups
+all_sprites.add(player1)
+player_sprites.add(player1)
+
+# Add sprite to groups
+all_sprites.add(enemies)
+enemy_sprites.add(enemies)
+
+# Main game loop
+def main():
+    game1 = Game()
+
+    while isRunning:
+        game1.create()
+        game1.load_text()
+        game1.handle_events()
+        game1.draw(screen)
+        game1.update()
+        # Updates surface
+        pg.display.update()
+
+class Game:
+    timer = 0
+    timer2 = 0
+    patternNumber = 0
+    score = 0
+    actualscore = 0
+    winMessage = 'You won!'
+    weeMes = None
+
+    def load_text(self):
+        # Text display / score display
+        self.actualscore = scoreText.render(str(self.score), False, (white))
+        self.weeMes = scoreText.render(str(self.winMessage), False, (green))
+
+    def create(self):
+        pass
+
+    def update(self):
+        player1.pUpdate()
+        for enemy in enemies:
+            Alien.eUpdate(enemy)
+        for bullet in bullets:
+            Bullet.bUpdate(bullet)
+            # Add sprites to group
+            all_sprites.add(bullets)
+            bullet_sprites.add(bullets)
+
+        # bullet + enemy collision detection and enemy elimination.
+        all_sprites.update()
+        for bullet in bullet_sprites:
+            self.counter = 0
+            if pg.sprite.spritecollide(bullet, enemy_sprites, dokill= True):
+                self.score += 1
+
+        clock.tick(FPS)
+        self.timer += clock.get_time()
+        self.timer2 += clock.get_time()
+        if self.timer > 800:
+            if self.patternNumber == 0:
+                for enemy in enemies:
+                    enemy.move_right()
+                print(self.timer)
+                self.timer = 0
+                self.patternNumber = 2
+            elif self.patternNumber == 1:
+                for enemy in enemies:
+                    enemy.move_left()
+                print(self.timer)
+                self.timer = 0
+                self.patternNumber = 3
+            elif self.patternNumber == 2:
+                for enemy in enemies:
+                    enemy.move_down()
+                print(self.timer)
+                self.timer = 0
+                self.patternNumber = 5
+            elif self.patternNumber == 3:
+                for enemy in enemies:
+                    enemy.move_up()
+                print(self.timer)
+                self.timer = 0
+                self.patternNumber = 0
+            elif self.patternNumber == 5:
+                for enemy in enemies:
+                    enemy.move_down()
+                print(self.timer)
+                self.timer = 0
+                self.patternNumber = 1 # Alien movement
+        if self.timer2 > 800:
+            for i in range(len(bullets)):
+                bullets[i].y_pos -= 10
+
+        screen.blit(self.actualscore, (200,400))
+        if self.score >= 80:
+            screen.blit(self.weeMes, (200, 200))
 
 
-    def shoot(self):
-        x_pos = self.x_pos
-        y_pos = self.y_pos
+    def handle_events(self):
+        for event in pg.event.get():
+            if event.type == pg.QUIT: # Quits the game if you click 'x'
+                pg.quit()
+                sys.exit()
+            if event.type == pg.KEYDOWN:
+                if event.key == pg.K_a:
+                    player1.x_pos -= 10
+                elif event.key == pg.K_d:
+                    player1.x_pos += 10
+                elif event.key == pg.K_q:
+                    player1.shoot()
 
-        # Instantiates new bullet
-        bullets.append(Bullet(x_pos=x_pos + (self.player_sprite_width/2) - (Bullet.bullet_sprite_width/2) ,y_pos=y_pos-Bullet.bullet_sprite_height))
+    def draw(self, surface):
+        # Screen background
+        surface.blit(bg_image, [0, 0])
 
-class Alien(pg.sprite.Sprite):
-    x_pos = 0
-    y_pos = 0
-    alien_pos = (x_pos, y_pos)
-    alien_sprite_width = 32
-    alien_sprite_height = 62
-    alien_sprite_size = (alien_sprite_width, alien_sprite_height)
-    def __init__(self, x_pos=0, y_pos=0):
-        pg.sprite.Sprite.__init__(self)
-        self.image = pg.Surface((self.alien_sprite_size))
-        self.image = pg.image.load_extended("alien_t.png")
-        self.image = pg.transform.scale(self.image, (32, 62))
-        self.rect = self.image.get_rect()
+        all_sprites.draw(surface)
 
-        self.x_pos = x_pos
-        self.y_pos = y_pos
-        for i in range(len(enemies)):
-            enemies[i].x_pos = int(i % 18) * 50  # Adds 50 to the next object in the enemies list to spread out the enemy on the x-axis
-            enemies[i].y_pos = int(i / 18) * 50  # Adds 50 to the next object in the enemies list on the y-axis to start a new line this happens each 16 enemies. Python always rounds down when converting floats to integers.
 
-    def eUpdate(self):
-        # Updates Rect position (invisible border around the sprite) with the sprite (2)
-        self.rect.x = self.x_pos
-        self.rect.y = self.y_pos
-
-    def move_down(self):
-        self.y_pos += 10
-
-    def move_up(self):
-        self.y_pos -=10
-
-    def move_right(self):
-        self.x_pos += 10
-
-    def move_left(self):
-        self.x_pos -= 10
-
-class Bullet(pg.sprite.Sprite):
-    x_pos = 0
-    y_pos = 0
-    bullet_pos = (x_pos, y_pos)
-    bullet_sprite_width = 10
-    bullet_sprite_height = 30
-    bullet_sprite_size = (bullet_sprite_width, bullet_sprite_height)
-    def __init__(self, x_pos=0,y_pos=0):
-        pg.sprite.Sprite.__init__(self)
-        self.image = pg.Surface((self.bullet_sprite_size))
-        self.image = pg.image.load_extended("laserguy.png")
-        self.image = pg.transform.scale(self.image, (10, 30))
-        self.rect = self.image.get_rect()
-
-        self.x_pos = x_pos
-        self.y_pos = y_pos
-
-    def bUpdate(self):
-        self.rect.x = self.x_pos
-        self.rect.y = self.y_pos
-
+if __name__ == "__main__":
+    main()
+    isRunning = False
+    pg.quit()
+    sys.exit()
 
 

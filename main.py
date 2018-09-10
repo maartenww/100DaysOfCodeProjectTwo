@@ -80,6 +80,7 @@ class Game:
             all_sprites.add(bullets)
             bullet_sprites.add(bullets)
 
+
         # bullet + enemy collision detection and enemy elimination.
         all_sprites.update()
         for bullet in bullet_sprites:
@@ -155,5 +156,4 @@ if __name__ == "__main__":
     isRunning = False
     pg.quit()
     sys.exit()
-
 
